@@ -1,12 +1,11 @@
-// import { calendarRepository } from "../repositories/calendarRepository";
 const calendarRepository = require("./../repositories/calendarRepository");
 
 const calendarService = {
-  async getDays(month, year) {
-    return await calendarRepository.getDays(month, year);
+  async getDays(from, to) {
+    return await calendarRepository.getDays(from, to);
   },
-  async getTasks(date) {
-    return await calendarRepository.getTasks(deadline);
+  async getTasks(deadline) {
+    return await calendarRepository.getTasksbyDeadline(deadline);
   },
   async createTask(task) {
     return await calendarRepository.createTask(task);
@@ -15,8 +14,12 @@ const calendarService = {
     return await calendarRepository.changeTask(id, task);
   },
 
-  async removeTask(id) {
-    return await calendarRepository.removeTask(id);
+  async removeTask(id, deadline) {
+    await calendarRepository.removeTask(id);
+    const tasksWithoutRemoved = await calendarRepository.getTasksbyDeadline(
+      deadline
+    );
+    return tasksWithoutRemoved;
   },
 
   async toggleTask(id) {
@@ -24,4 +27,4 @@ const calendarService = {
   },
 };
 
-module.exports = calendarRepository;
+module.exports = calendarService;

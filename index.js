@@ -1,34 +1,26 @@
-// pgp = require("pg-promise")();
 const express = require("express");
-// import pgProm from "pg-promise";
-// import express from "express";
 const getCalendarRoutes = require("./routes/calendarRouter");
-// const pgp = pgProm();
-const app = express();
-const port = process.env.PORT || 3000;
+const cors = require("cors");
+const db = require("./db");
 
-// const db = pgp(
-//   "postgres://test_db_et5z_user:2dIR0qGJs9GRdNz38ajo0yFbi6RG4Nru@dpg-cmp9i9nqd2ns738psfg0-a.oregon-postgres.render.com/test_db_et5z?ssl=true"
-// );
+const app = express();
+const port = process.env.PORT || 3001;
+
 const expressMiddleWare = express.json();
 app.use(expressMiddleWare);
+app.use(cors());
 
 const calendarRouter = getCalendarRoutes();
 app.use("/calendar", calendarRouter);
-// app.get("/calendar/:id", async (req, res) => {
-//   try {
-//     const result = await db.any(
-//       "SELECT * FROM task WHERE EXTRACT(MONTH FROM deadline) = $1",
-//       [req.params.id]
-//     );
-//     console.log(result);
-//     res.send(result);
-//   } catch (error) {
-//     console.log("Ошибка!");
-//     console.log(error);
-//   }
-// });
 
+app.delete("/__test__", async (req, res) => {
+  db.none("DELETE FROM task", []);
+  res.sendStatus(204);
+});
 app.listen(port, () => {
   console.log(`Port ${port} is listening...`);
 });
+
+module.exports = app;
+
+// INSERT INTO days (date, a_priority) VALUES ('2024-01-27',2) ON CONFLICT(date) DO UPDATE SET a_priority = days.a_priority + 1;
