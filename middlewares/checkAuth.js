@@ -4,6 +4,9 @@ const checkAuth = (req, res, next) => {
   const token = (req.headers.authorization || "").replace(/Bearer\s?/, "");
 
   console.log("token: ", token);
+  ///For working on frontend
+
+  //
   if (token) {
     try {
       const decoder = jwt.verify(token, "12345");

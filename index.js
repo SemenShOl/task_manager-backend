@@ -5,6 +5,7 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const db = require("./db");
 const getAuthRoutes = require("./routes/authRouter");
+const getNotesRouter = require("./routes/notesRouter");
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -15,8 +16,10 @@ app.use(cors());
 
 const calendarRouter = getCalendarRoutes();
 const authRouter = getAuthRoutes();
+const notesRouter = getNotesRouter();
 app.use("/calendar", calendarRouter);
 app.use("/auth", authRouter);
+app.use("/notes", notesRouter);
 
 const start = () => {
   try {

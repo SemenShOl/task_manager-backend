@@ -23,11 +23,11 @@ const getCalendarRoutes = () => {
   });
 
   calendarRouter.post("/", checkAuth, async (req, res) => {
-    const tasksWithAdded = await calendarRepository.createTask(
+    const { tasksWithAdded, status } = await calendarRepository.createTask(
       req.body,
       req.userID
     );
-    res.json(tasksWithAdded);
+    res.status(status).json(tasksWithAdded);
   });
 
   calendarRouter.put("/task/:id", checkAuth, async (req, res) => {

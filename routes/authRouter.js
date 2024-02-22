@@ -3,7 +3,6 @@ const userService = require("../bll/userService");
 
 const getAuthRoutes = () => {
   const authRouter = Router({});
-
   authRouter.post("/registration", async (req, res) => {
     const { password, login } = req.body;
     const userData = await userService.registration(password, login);

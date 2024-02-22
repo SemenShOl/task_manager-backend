@@ -7,7 +7,7 @@ const calendarRepository = {
       //   [from, to]
       // );
       const result = await db.query(
-        "SELECT deadline::VARCHAR, SUM(CASE WHEN priority = 0 THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN priority = 1 THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN priority = 2 THEN 1 ELSE 0 END) AS A FROM task  WHERE deadline >= $1 AND deadline <= $2 AND user_id = $3 GROUP BY deadline;",
+        "SELECT deadline::VARCHAR, SUM(CASE WHEN priority = 'low' AND is_completed = 'f' THEN 1 ELSE 0 END) AS low, SUM(CASE WHEN priority = 'medium' AND is_completed = 'f' THEN 1 ELSE 0 END) AS medium, SUM(CASE WHEN priority = 'high' AND is_completed = 'f' THEN 1 ELSE 0 END) AS high FROM task  WHERE deadline >= $1 AND deadline <= $2 AND user_id = $3 GROUP BY deadline",
         [from, to, userID]
       );
       return result.rows;
@@ -52,7 +52,11 @@ const calendarRepository = {
         "INSERT INTO task (title, description, deadline, date_of_creation, priority, user_id, is_completed) VALUES ($1, $2, $3, NOW()::DATE, $4, $5, FALSE)",
         [task.title, task.description, task.deadline, task.priority, userID]
       );
-      return 201;
+      //TODO where deadline and user_id = ....
+      const result = await db.query("select * from task where deadline = $1", [
+        task.deadline,
+      ]);
+      return { tasksWithAdded: result.rows, status: 201 };
     } catch (error) {
       console.log("Ошибка!");
       console.log(error);
@@ -90,7 +94,7 @@ const calendarRepository = {
 
   async removeTask(taskID, userID) {
     try {
-      // await db.none("DELETE FROM task WHERE id = $1;", [id]);
+      // await db.none("DELETE FROM task WHERE id = $1", [userID]);
       await db.query("DELETE FROM task WHERE id = $1 AND user_id = $2", [
         taskID,
         userID,
