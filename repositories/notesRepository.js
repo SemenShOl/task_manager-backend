@@ -2,9 +2,10 @@ const db = require("../db");
 const notesRepository = {
   async getAllNotes(userID) {
     try {
-      const result = await db.query("SELECT * FROM note WHERE user_id = $1", [
-        userID,
-      ]);
+      const result = await db.query(
+        "SELECT * FROM note WHERE user_id = $1 ORDER BY title",
+        [userID]
+      );
       return result.rows;
     } catch (error) {
       console.log("Ошибка!");
