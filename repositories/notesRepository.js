@@ -2,10 +2,13 @@ const db = require("../db");
 const notesRepository = {
   async getAllNotes(userID) {
     try {
+      console.log("get all notes with userId: ", userID);
       const result = await db.query(
         "SELECT * FROM note WHERE user_id = $1 ORDER BY title",
         [userID]
       );
+      console.log("chosen rows: ", result.rows);
+
       return result.rows;
     } catch (error) {
       console.log("Ошибка!");
@@ -31,7 +34,9 @@ const notesRepository = {
         "INSERT INTO note (title, text, user_id) VALUES ($1, $2, $3)",
         [note.title, note.text, userID]
       );
-      const result = await db.query("select * from note");
+      const result = await db.query("select * from note where user_id = $1", [
+        userID,
+      ]);
       return { notesWithNew: result.rows, status: 201 };
     } catch (error) {
       console.log("Ошибка!");

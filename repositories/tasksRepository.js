@@ -17,6 +17,20 @@ const calendarRepository = {
     }
   },
 
+  async getAllTasks(userID) {
+    try {
+      console.log("userID: ", userID);
+      const result = await db.query(
+        "SELECT id, user_id, title, description, deadline::VARCHAR, date_of_creation::VARCHAR, is_completed, priority FROM task where user_id = $1",
+        [userID]
+      );
+      return result.rows;
+    } catch (error) {
+      console.log("Ошибка!");
+      console.log(error);
+    }
+  },
+
   async getTasksbyDeadline(deadline, userID) {
     try {
       // const result = await db.any(
@@ -24,10 +38,9 @@ const calendarRepository = {
       //   [deadline]
       // );
       const result = await db.query(
-        "SELECT id, user_id, title, description, deadline::VARCHAR, date_of_creation::VARCHAR, is_completed, priority FROM task WHERE deadline = $1 AND user_id = $2",
+        "SELECT id, user_id, title, description, deadline::VARCHAR, date_of_creation::VARCHAR, is_completed, priority FROM task WHERE deadline = $1 AND user_id = $2 ORDER BY is_completed",
         [deadline, userID]
       );
-      // console.log("result from bd: ", result);
       return result.rows;
     } catch (error) {
       console.log("Ошибка!");

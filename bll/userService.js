@@ -11,9 +11,9 @@ const userService = {
       const hashPass = await bcrypt.hash(password, 3);
 
       await authRepostitory.createUser(login, hashPass);
-      const result = await authRepostitory.getUserByLogin(login);
+      const newUsersWithLogin = await authRepostitory.getUserByLogin(login);
 
-      const createdUser = result.rows[0];
+      const createdUser = newUsersWithLogin[0];
       console.log("Новосозданный user: ", createdUser);
       const token = tokenService.generateToken(createdUser.id);
       console.log("token: ", token);
@@ -31,12 +31,19 @@ const userService = {
       return { status: 401 };
     }
     const userInfo = usersWithLogin[0];
-    const isValidPass = bcrypt.compare(password, userInfo.password);
+    const isValidPass = await bcrypt.compare(password, userInfo.password);
+    console.log("isValidPass: ", isValidPass);
     if (!isValidPass) {
       return { status: 401 };
     }
     const token = tokenService.generateToken(userInfo.id);
     return { status: 200, token };
   },
+
+  async updateLoginOrPassword(userID, newPassword, newLogin) {
+    const hashPass = await bcrypt.hash(newPassword, 3);
+    await authRepostitory.changeUser(userID, newLogin, hashPass);
+  },
 };
+
 module.exports = userService;

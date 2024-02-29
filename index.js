@@ -1,9 +1,8 @@
 const express = require("express");
-const getCalendarRoutes = require("./routes/calendarRouter");
+const getTasksRoutes = require("./routes/tasksRouter");
 const cors = require("cors");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
-const db = require("./db");
 const getAuthRoutes = require("./routes/authRouter");
 const getNotesRouter = require("./routes/notesRouter");
 
@@ -14,10 +13,10 @@ app.use(express.json());
 // app.unsubscribe(cookieParser());
 app.use(cors());
 
-const calendarRouter = getCalendarRoutes();
+const tasksRouter = getTasksRoutes();
 const authRouter = getAuthRoutes();
 const notesRouter = getNotesRouter();
-app.use("/calendar", calendarRouter);
+app.use("/calendar", tasksRouter);
 app.use("/auth", authRouter);
 app.use("/notes", notesRouter);
 
