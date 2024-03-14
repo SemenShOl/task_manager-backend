@@ -1,5 +1,4 @@
 const Router = require("express");
-const calendarService = require("../bll/calendarService");
 const tasksRepository = require("../repositories/tasksRepository");
 const checkAuth = require("../middlewares/checkAuth");
 

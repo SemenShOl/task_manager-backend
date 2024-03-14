@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const checkAuth = (req, res, next) => {
   const token = (req.headers.authorization || "").replace(/Bearer\s?/, "");
 
-  console.log("token: ", token);
+  // console.log("token: ", token);
   ///For working on frontend
 
   //

@@ -5,7 +5,8 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const getAuthRoutes = require("./routes/authRouter");
 const getNotesRouter = require("./routes/notesRouter");
-
+const studyService = require("./bll/studyService");
+const getStudyRoutes = require("./routes/studyRouter");
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -16,14 +17,17 @@ app.use(cors());
 const tasksRouter = getTasksRoutes();
 const authRouter = getAuthRoutes();
 const notesRouter = getNotesRouter();
+const studyRouter = getStudyRoutes();
 app.use("/calendar", tasksRouter);
 app.use("/auth", authRouter);
 app.use("/notes", notesRouter);
+app.use("/study", studyRouter);
 
 const start = () => {
   try {
     app.listen(port, () => {
       console.log(`Port ${port} is listening...`);
+      // studyService.getScheduleByDay("2024-03-13", "ПИН-36");
     });
   } catch (error) {
     console.log("Error!");

@@ -8,12 +8,19 @@ const pgp = require("pg-promise")();
 
 const Pool = require("pg").Pool;
 
+// const db = new Pool({
+//   user: "postgres",
+//   password: "12345",
+//   host: "localhost",
+//   // post: 5432,
+//   port: 5432,
+//   database: "postgres",
+// });
 const db = new Pool({
-  user: "postgres",
+  user: "semyon",
   password: "12345",
   host: "localhost",
-  // post: 5432,
   port: 5432,
-  database: "postgres",
+  database: "taskdb",
 });
 module.exports = db;
