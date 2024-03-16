@@ -37,12 +37,13 @@ const userService = {
       return { status: 401 };
     }
     const token = tokenService.generateToken(userInfo.id);
-    return { status: 200, token };
+    const chosenGroup = userInfo.group_name;
+    return { status: 200, token, chosenGroup };
   },
 
-  async updateLoginOrPassword(userID, newPassword, newLogin) {
+  async updateGroupOrPassword(userID, newGroupName, newPassword) {
     const hashPass = await bcrypt.hash(newPassword, 3);
-    await authRepostitory.changeUser(userID, newLogin, hashPass);
+    await authRepostitory.changeUser(userID, hashPass, newGroupName);
   },
 };
 

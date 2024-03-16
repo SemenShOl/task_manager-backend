@@ -18,25 +18,25 @@ const authRepostitory = {
 
   async createUser(login, hashPass) {
     try {
-      await db.query("INSERT INTO web_user (login, password) VALUES ($1, $2)", [
-        login,
-        hashPass,
-      ]);
+      await db.query(
+        "INSERT INTO web_user (login, password, group_name) VALUES ($1, $2, 'ПИН-36')",
+        [login, hashPass]
+      );
     } catch (error) {
       console.log("Ошибка!");
       console.log(error);
     }
   },
 
-  async changeUser(userID, newLogin, newPassword) {
+  async changeUser(userID, newPassword, newGroupName) {
     try {
       console.log("userID: ", userID);
-      console.log("newLogin: ", newLogin);
+      console.log("newGroupName: ", newGroupName);
       console.log("newPassword: ", newPassword);
 
       await db.query(
-        "update web_user set login=$1, password=$2 where id = $3",
-        [newLogin, newPassword, userID]
+        "update web_user set group_name=$1, password=$2 where id = $3",
+        [newGroupName, newPassword, userID]
       );
     } catch (error) {
       console.log("Ошибка!");

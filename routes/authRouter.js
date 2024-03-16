@@ -23,13 +23,16 @@ const getAuthRoutes = () => {
         .status(userData.status)
         .json({ message: "Логин или пароль неверный" });
     }
-    res.status(userData.status).json({ message: userData.token });
+    res
+      .status(userData.status)
+      .json({ message: userData.token, groupName: userData.chosenGroup });
   });
 
   authRouter.put("/new_data", checkAuth, async (req, res) => {
-    const { password, login } = req.body;
+    const { password, chosenGroup } = req.body;
     const userID = req.userID;
-    await userService.updateLoginOrPassword(userID, password, login);
+    // console.log(newPassword, newGroupName);
+    await userService.updateGroupOrPassword(userID, chosenGroup, password);
     res.sendStatus(200);
   });
 

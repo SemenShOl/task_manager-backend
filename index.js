@@ -27,7 +27,6 @@ const start = () => {
   try {
     app.listen(port, () => {
       console.log(`Port ${port} is listening...`);
-      // studyService.getScheduleByDay("2024-03-13", "ПИН-36");
     });
   } catch (error) {
     console.log("Error!");
