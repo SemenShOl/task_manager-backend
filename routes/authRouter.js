@@ -29,10 +29,10 @@ const getAuthRoutes = () => {
   });
 
   authRouter.put("/new_data", checkAuth, async (req, res) => {
-    const { password, chosenGroup } = req.body;
+    const { password, groupName } = req.body;
     const userID = req.userID;
     // console.log(newPassword, newGroupName);
-    await userService.updateGroupOrPassword(userID, chosenGroup, password);
+    await userService.updateGroupOrPassword(userID, groupName, password);
     res.sendStatus(200);
   });
 

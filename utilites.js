@@ -9,7 +9,22 @@ const daySchedule = {
   8: ["20:00", "21:20"],
 };
 
-function getTimeOfLessonStart(numberOfLesson) {
-  return daySchedule[numberOfLesson][0];
-}
-module.exports = getTimeOfLessonStart;
+const utilites = {
+  getTimeOfLessonStart(numberOfLesson) {
+    return daySchedule[numberOfLesson][0];
+  },
+
+  getTypeOfWeekByDate(startOfSemesterString, activeDate) {
+    startOfSemester = new Date(startOfSemesterString);
+
+    const thisDate = new Date(activeDate);
+    const timeDelta = (thisDate - startOfSemester) / (1000 * 60 * 60 * 24);
+    const currentWeek = Math.floor(timeDelta / 7) + 1;
+    n = (currentWeek - 1) % 4;
+    return {
+      typeOfWeek: n,
+      numberOfDayInWeek: (thisDate.getDay() + 6) % 7,
+    };
+  },
+};
+module.exports = utilites;

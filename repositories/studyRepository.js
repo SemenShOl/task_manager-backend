@@ -1,5 +1,6 @@
 const db = require("../db");
 const studyRepository = {
+  startOfSemester: "",
   async createStudyGroup(groupName, groupID) {
     try {
       await db.query("INSERT INTO study_group (name, id) VALUES ($1, $2)", [

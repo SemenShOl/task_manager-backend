@@ -1,6 +1,6 @@
 const studyRepository = require("../repositories/studyRepository");
 const axios = require("axios");
-const getTimeOfLessonStart = require("../utilites");
+const utilites = require("../utilites");
 const studyService = {
   async updateStudyGroupInfoFromOrioks() {
     const groupsInfo = await axios.get(
@@ -62,21 +62,37 @@ const studyService = {
       );
     }
   },
-
-  async getScheduleByDay(activeDate, groupName) {
-    const startOfSemester = await axios.get(
-      `http://orioks.miet.ru/api/v1/schedule`,
-      {
+  async getSemesterInfo() {
+    try {
+      const result = await axios.get(`http://orioks.miet.ru/api/v1/schedule`, {
         headers: {
           Accept: "application/json",
           Authorization: "Bearer aBJ3VZ47cYhZCvVkbIDsgZxJSPOQpSCZ",
-          "User-Agent": "task_managerrer/0.1 GNU/Linux 6.5.0-21-Ubuntu",
+          "User-Agent": "task_manager/0.1 GNU/Linux 6.5.0-21-Ubuntu",
         },
-      }
-    );
-    console.log("startOfSemester: ", startOfSemester.data);
-    const { typeOfWeek, numberOfDayInWeek } = getTypeOfWeekByDate(
-      startOfSemester.data.semester_start,
+      });
+      return result.data;
+    } catch (error) {
+      console.log("Ошибка!");
+      console.log(error);
+    }
+  },
+  async getScheduleByDay(activeDate, groupName) {
+    // const startOfSemester = await axios.get(
+    //   `http://orioks.miet.ru/api/v1/schedule`,
+    //   {
+    //     headers: {
+    //       Accept: "application/json",
+    //       Authorization: "Bearer aBJ3VZ47cYhZCvVkbIDsgZxJSPOQpSCZ",
+    //       "User-Agent": "task_manager/0.1 GNU/Linux 6.5.0-21-Ubuntu",
+    //     },
+    //   }
+    // );
+
+    const semesterInfo = await this.getSemesterInfo();
+    console.log("startOfSemester: ", semesterInfo);
+    const { typeOfWeek, numberOfDayInWeek } = utilites.getTypeOfWeekByDate(
+      semesterInfo.semester_start,
       activeDate
     );
     const scheduleGroupInfoOfAllDays =
@@ -94,22 +110,59 @@ const studyService = {
     return schedule
       .map((dayInfo) => ({
         ...dayInfo.schedule_info,
-        startOfLesson: getTimeOfLessonStart(dayInfo.schedule_info.class),
+        startOfLesson: utilites.getTimeOfLessonStart(
+          dayInfo.schedule_info.class
+        ),
       }))
       .sort((a, b) => a.class - b.class);
   },
+
+  async getScheduleByPeriod(groupName, from) {
+    const scheduleGroupInfoOfAllDays =
+      await studyRepository.getSemesterScheduleByGroup(groupName);
+    const schedule = scheduleGroupInfoOfAllDays
+      .map((day) => day.schedule_info)
+      .sort((a, b) => `${a.week}${a.day}`.localeCompare(`${b.week}${b.day}`));
+
+    const semesterInfo = await this.getSemesterInfo();
+
+    let { typeOfWeek } = utilites.getTypeOfWeekByDate(
+      semesterInfo.semester_start,
+      from
+    );
+    const scheduleGlobal = [];
+    for (let i = 1; i <= 6; i++) {
+      typeOfWeek = (i + 1) % 4;
+      console.log("typeOfWeek: ", typeOfWeek);
+      scheduleGlobal.push(schedule.filter((day) => day.week === typeOfWeek));
+    }
+    const sch = [
+      new Set(),
+      new Set(),
+      new Set(),
+      new Set(),
+      new Set(),
+      new Set(),
+    ];
+    scheduleGlobal.forEach((week, index) => {
+      week.forEach((day) => {
+        sch[index].add(day.day);
+      });
+    });
+
+    console.log("sch: ", sch);
+    const respSch = new Array(7 * 6).fill(false);
+    respSch.forEach((v, i) => {
+      sch.forEach((week, index) => {
+        week.forEach((day) => {
+          if (day + index * 7 === i) {
+            respSch[i] = true;
+          }
+        });
+      });
+    });
+
+    return respSch;
+  },
 };
 module.exports = studyService;
-
-function getTypeOfWeekByDate(startOfSemesterString, activeDate) {
-  startOfSemester = new Date(startOfSemesterString);
-
-  const thisDate = new Date(activeDate);
-  const timeDelta = (thisDate - startOfSemester) / (1000 * 60 * 60 * 24);
-  const currentWeek = Math.floor(timeDelta / 7) + 1;
-  n = (currentWeek - 1) % 4;
-  return {
-    typeOfWeek: n,
-    numberOfDayInWeek: (thisDate.getDay() + 6) % 7,
-  };
-}
