@@ -124,17 +124,19 @@ const studyService = {
       .map((day) => day.schedule_info)
       .sort((a, b) => `${a.week}${a.day}`.localeCompare(`${b.week}${b.day}`));
 
-    const semesterInfo = await this.getSemesterInfo();
+    // const semesterInfo = await this.getSemesterInfo();
+    const semesterInfo = {semester_start: '2024-02-05'};
 
     let { typeOfWeek } = utilites.getTypeOfWeekByDate(
       semesterInfo.semester_start,
       from
     );
     const scheduleGlobal = [];
+    console.log("from ", from);
     for (let i = 1; i <= 6; i++) {
-      typeOfWeek = (i + 1) % 4;
       console.log("typeOfWeek: ", typeOfWeek);
       scheduleGlobal.push(schedule.filter((day) => day.week === typeOfWeek));
+      typeOfWeek = (typeOfWeek + 1) % 4;
     }
     const sch = [
       new Set(),

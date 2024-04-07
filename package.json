@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --inspect index.js",
+    "orioks": "node getOrioksData.js",
     "test": "jest"
   },
   "author": "Semyon Shishkin",

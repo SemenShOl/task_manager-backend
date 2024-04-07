@@ -26,6 +26,9 @@ app.use("/study", studyRouter);
 const start = () => {
   try {
     app.listen(port, () => {
+      studyService.updateStudyGroupInfoFromOrioks();
+      studyService.updateCurrentScheduleFromOrioks();
+      studyService.updateCurrentLessonsTimeFromOrioks();
       console.log(`Port ${port} is listening...`);
     });
   } catch (error) {
